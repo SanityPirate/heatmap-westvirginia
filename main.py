@@ -1,7 +1,7 @@
-from urllib.request import urlopen
-import pandas as pd
 import json
+import pandas as pd
 import plotly.express as px
+from urllib.request import urlopen
 
 # Get county geo data for map creation
 with urlopen('https://raw.githubusercontent.com/plotly/datasets/master/geojson-counties-fips.json') as response:
