@@ -18,6 +18,32 @@ covidData = pd.read_csv(covidFile, usecols=
 ['County name', 'FIPS County Code', 'Deaths involving COVID-19'])
 covidDF = pd.DataFrame(covidData)
 
+# Load covid infections by county dataset and convert to dataframe
+infectFile = 'covid-infect.csv'
+infectData = pd.read_csv(infectFile, usecols=
+                         ['county', 'fips', 'cases'])
+infectDF = pd.DataFrame(infectData)
+
+# Assemble heatmap for covid cases by county
+infectFig = px.choropleth(infectDF,
+                         geojson=counties,
+                         locations='fips',
+                         color='cases',
+                         color_continuous_scale="OrRd",
+                         range_color=(0, 5000),
+                         scope="usa",
+                         hover_name='county',
+                         hover_data={'fips': False,
+                                     'cases': True},
+                         labels={'cases': 'COVID-19 Cases '}
+                         )
+
+infectFig.update_geos(fitbounds="locations", visible=False)  # Zoom map to WV
+infectFig.update_layout(margin={"r": 100, "t": 100, "l": 100, "b": 100},
+                     title_text='West Virginia COVID-19 Cases by County as of 11/07/2020')
+
+infectFig.show()
+
 # Assemble heatmap for covid deaths by county
 covidFig = px.choropleth(covidDF,
                          geojson=counties,
