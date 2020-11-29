@@ -4,6 +4,8 @@
 # Covid Case by County data from: https://github.com/nytimes/covid-19-data/blob/master/us-counties.csv
 # Covid Deaths by County data from:
 # https://data.cdc.gov/NCHS/Provisional-COVID-19-Death-Counts-in-the-United-St/kn79-hsxy
+# Reported Crime by County data from:
+# https://ucr.fbi.gov/crime-in-the-u.s/2016/crime-in-the-u.s.-2016/tables/table-8/table-8-state-cuts/west-virginia.xls
 
 
 import json
@@ -25,6 +27,11 @@ opioidFile = 'opioid-county.xlsx'
 opioidData = pd.read_excel(opioidFile)
 opioidDF = pd.DataFrame(opioidData, columns=['FIPS', 'County', 'Opioid Prescribing Rate per 100'])
 
+# Load crime dataset and convert to dataframe
+crimeFile = 'west-virginia-crime.xlsx'
+crimeData = pd.read_excel(crimeFile)
+crimeDF = pd.DataFrame(crimeData, columns=['FIPS', 'County', 'Violent crime'])
+
 # Load covid deaths by county dataset and convert to dataframe
 covidFile = 'covid-county.csv'
 covidData = pd.read_csv(covidFile, usecols=
@@ -34,45 +41,45 @@ covidDF = pd.DataFrame(covidData)
 # Load covid infections by county dataset and convert to dataframe
 infectFile = 'covid-infect.csv'
 infectData = pd.read_csv(infectFile, usecols=
-                         ['county', 'fips', 'cases'])
+['county', 'fips', 'cases'])
 infectDF = pd.DataFrame(infectData)
 
 # Assemble heatmap for opioid cases by county
 opioidFig = px.choropleth(opioidDF,
-                         geojson=counties,
-                         locations='FIPS',
-                         color='Opioid Prescribing Rate per 100',
-                         color_continuous_scale="OrRd",
-                         range_color=(0, 200),
-                         scope="usa",
-                         hover_name='County',
-                         hover_data={'FIPS': False,
-                                     'Opioid Prescribing Rate per 100': True},
-                         labels={'Opioid Prescribing Rate per 100': 'Opioid Prescribing Rate (per 100) '}
-                         )
+                          geojson=counties,
+                          locations='FIPS',
+                          color='Opioid Prescribing Rate per 100',
+                          color_continuous_scale="OrRd",
+                          range_color=(0, 200),
+                          scope="usa",
+                          hover_name='County',
+                          hover_data={'FIPS': False,
+                                      'Opioid Prescribing Rate per 100': True},
+                          labels={'Opioid Prescribing Rate per 100': 'Opioid Prescribing Rate (per 100) '}
+                          )
 opioidFig.update_geos(fitbounds="locations", visible=False)  # Zoom map to WV
 opioidFig.update_layout(margin={"r": 100, "t": 100, "l": 100, "b": 100},
-                     title_text='2017 West Virginia County Opioid Prescribing Rates per 100 People')
+                        title_text='2017 West Virginia County Opioid Prescribing Rates per 100 People')
 
 opioidFig.show()
 
 # Assemble heatmap for covid cases by county
 infectFig = px.choropleth(infectDF,
-                         geojson=counties,
-                         locations='fips',
-                         color='cases',
-                         color_continuous_scale="OrRd",
-                         range_color=(0, 5000),
-                         scope="usa",
-                         hover_name='county',
-                         hover_data={'fips': False,
-                                     'cases': True},
-                         labels={'cases': 'COVID-19 Cases '}
-                         )
+                          geojson=counties,
+                          locations='fips',
+                          color='cases',
+                          color_continuous_scale="OrRd",
+                          range_color=(0, 5000),
+                          scope="usa",
+                          hover_name='county',
+                          hover_data={'fips': False,
+                                      'cases': True},
+                          labels={'cases': 'COVID-19 Cases '}
+                          )
 
 infectFig.update_geos(fitbounds="locations", visible=False)  # Zoom map to WV
 infectFig.update_layout(margin={"r": 100, "t": 100, "l": 100, "b": 100},
-                     title_text='West Virginia COVID-19 Cases by County as of 11/07/2020')
+                        title_text='West Virginia COVID-19 Cases by County as of 11/07/2020')
 
 infectFig.show()
 
@@ -92,10 +99,30 @@ covidFig = px.choropleth(covidDF,
 
 covidFig.update_geos(fitbounds="locations", visible=True)  # Zoom map to WV
 covidFig.update_layout(margin={"r": 100, "t": 100, "l": 100, "b": 100},
-                     title_text='West Virginia COVID-19 Death Counts by County as of 11/04/2020 - '
-                                '(Counties not shown have <10 deaths)')
+                       title_text='West Virginia COVID-19 Death Counts by County as of 11/04/2020 - '
+                                  '(Counties not shown have <10 deaths)')
 
 covidFig.show()
+
+# Assemble heatmap for crime
+crimeFig = px.choropleth(crimeDF,
+                         geojson=counties,
+                         locations='FIPS',
+                         color='Violent crime',
+                         color_continuous_scale="OrRd",
+                         range_color=(0, 150),
+                         scope="usa",
+                         hover_name='County',
+                         hover_data={'FIPS': False,
+                                     'Violent crime': True},
+                         labels={'Violent crime': 'Violent Crime Reports'}
+                         )
+
+crimeFig.update_geos(fitbounds="locations", visible=True)  # Zoom map to WV
+crimeFig.update_layout(margin={"r": 100, "t": 100, "l": 100, "b": 100},
+                       title_text='Violent Crime Offenses Known to Law Enforcement, 2016')
+
+crimeFig.show()
 
 # Assemble heatmap for population
 popFig = px.choropleth(popDF,
