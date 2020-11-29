@@ -44,6 +44,30 @@ infectData = pd.read_csv(infectFile, usecols=
 ['county', 'fips', 'cases'])
 infectDF = pd.DataFrame(infectData)
 
+# Data Comparisons
+print("Top 3 Most Populous Counties: ")
+print(popDF.nlargest(3, 'Census'))
+
+print("\nTop 3 Counties by Opioid Abuse Rates per 100 People: ")
+print(opioidDF.nlargest(3, 'Opioid Prescribing Rate per 100'))
+
+print("\nAverage Opioid Abuse Rate: " + str(opioidDF["Opioid Prescribing Rate per 100"].mean()))
+
+print("\nTop 3 Counties by Reports of Violent Crimes: ")
+print(crimeDF.nlargest(3, 'Violent crime'))
+
+print("\nAverage Violent Crime Reports: " + str(crimeDF["Violent crime"].mean()))
+
+print("\nTop 3 Counties by Covid Deaths: ")
+print(covidDF.nlargest(3, 'Deaths involving COVID-19'))
+
+print("\nAverage COVID Deaths: " + str(covidDF["Deaths involving COVID-19"].mean()))
+
+print("\nTop 3 Counties by Covid Infections: ")
+print(infectDF.nlargest(3, 'cases'))
+
+print("\nAverage COVID Infections: " + str(infectDF["cases"].mean()))
+
 # Assemble heatmap for opioid cases by county
 opioidFig = px.choropleth(opioidDF,
                           geojson=counties,
